@@ -1,0 +1,51 @@
+:root {
+  --light-cream-background: #FFF9F0;
+  --border-color: #FBF1E2;
+  --row-bottom-border-color: #EBE8DE;
+  --data-gray-color: #6C7275;
+  --text-color: #231F26;
+  --dark-light-brown: #9D8661;
+  --white-color: #ffffff;
+  --black-color: #000000;
+  --light-one-brown-color: #EAD4B1;
+}
+body{
+  font-family: "Work Sans", sans-serif;
+}
+::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+::-webkit-scrollbar {
+  height: 6px;
+  width: 10px;
+}
+.img-black-active{
+  display: none;
+}
+.ib-img-blck-active .img-black-active{
+  display: block;
+}
+.ib-img-blck-hover:hover .img-black-active{
+  display: block;
+}
+.ib-img-blck-hover:hover .ib-img-non-active{
+  display: none;
+}
+.ib-img-blck-active .ib-img-non-active{
+  display: none;
+}
+.ib-sidebar-border-btm{
+  border-color: var(--text-color) !important;
+}
+.Toastify__toast-body{
+  font-family: "Work Sans", sans-serif;
+  color: var(--text-color);
+}
+.Toastify__toast--error .Toastify__toast-body{
+  color: #e74c3c;
+}
