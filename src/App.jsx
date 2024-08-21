@@ -4,11 +4,8 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from "r
 import Dashboard from "./Pages/Home";
 import Login from "./Pages/Login";
 import {
-  Amazon,
   DecoTvFrames,
   FrameMyTv,
-  BestBuy,
-  WayFair,
   ReturnDetails
 } from "./Pages/ReturnRequest";
 import Layout from "./Components/Layout";
@@ -77,9 +74,6 @@ const App = () => {
             <Route path="/return-request/deco-tv-frames/:id" element={<ReturnDetails />} />
             <Route path="/return-request/frame-my-tv" element={<FrameMyTv />} />
             <Route path="/return-request/frame-my-tv/:id" element={<ReturnDetails />} />
-            <Route path="/return-request/amazon" element={<Amazon />} />
-            <Route path="/return-request/best-buy" element={<BestBuy />} />
-            <Route path="/return-request/way-fair" element={<WayFair />} />
             <Route path="/return-request/deco-tv-frames/shipping-label/:id" element={<ShippingLabel />} />
             <Route path="/return-request/frame-my-tv/shipping-label/:id" element={<ShippingLabel />} />
 

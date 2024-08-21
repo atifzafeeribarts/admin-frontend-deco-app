@@ -4,6 +4,7 @@ import ReturnTable from "./ReturnTable";
 import SearchBar from "./SearchBar";
 import TabButton from "./TabButtons";
 import TableSkeleton from "./TableSkeleton";
+import { countReturns } from "../Services/api";
 function TablesAndSearch({ TableData, TabName, setTabName, isTableLoaded }) {
   const tabs = [
     { name: "ALL", label: "All" },
@@ -28,14 +29,22 @@ function TablesAndSearch({ TableData, TabName, setTabName, isTableLoaded }) {
       filterFunc(globalFilter);
     }
   }, [globalFilter, filterFunc]);
+  // Info: Updating Count of Returns Closed, Open, Declined and Requested
+  const [countData, setcountData] = useState(null);
+  useEffect(() => {
+    countReturns().then((data) => {
+      setcountData(data)
+    })
+  }, [])
+  
   /* ----- END - Taking Data from Child Components ----- */
   return (
     <>
       <div className="flex max-md:flex-col max-sm:gap-4 gap-6 mb-6">
-        <div className="md:w-[50%]">
+        <div className="sm:w-[40%]">
           <SearchBar filter={globalFilter} setFilter={setGlobalFilter} />
         </div>
-        <div className="md:w-[50%] flex justify-between items-center gap-2 max-lg:[&>*]:w-[48%]  lg:[&>*]:h-[100%] max-lg:flex-wrap">
+        <div className="sm:w-[60%] flex justify-between items-center gap-2 max-lg:[&>*]:w-[48%]  lg:[&>*]:h-[100%] max-lg:flex-wrap">
           {tabs.map((tab) => (
             <TabButton
               key={tab.name}
@@ -45,7 +54,7 @@ function TablesAndSearch({ TableData, TabName, setTabName, isTableLoaded }) {
               }}
               isActive={TabName === tab.name}
             >
-              {tab.label}
+              {tab.label} {countData?.[tab.name] ? `(${countData[tab.name]})` : "(0)"}
             </TabButton>
           ))}
         </div>

@@ -3,7 +3,7 @@ import html2canvas from 'html2canvas';
 import QRCode from 'qrcode.react';
 import Barcode from 'react-barcode';
 import { useLocation } from "react-router-dom";
-import { orderDeatilsApi } from "../../Services/api";
+import { returnDetailsAPI } from "../../Services/api";
 import decoTVLogo from "../../assets/DecoTVLogo.png";
 import fmtvTVLogo from "../../assets/FMTVlogo.png";
 import madeinUSLogo from "../../assets/made-in-us-logo.jpg";
@@ -23,7 +23,7 @@ const ShippingLabel = () => {
         setShippinglabelgenerate_storename(pathname.split('/')[2]);
         setShippinglabelgenerate_id(pathname.split('/')[4]);
         if (shippinglabelgenerate_storename !== "" && shippinglabelgenerate_id !== "") {
-            orderDeatilsApi(shippinglabelgenerate_storename, shippinglabelgenerate_id)
+            returnDetailsAPI(shippinglabelgenerate_storename, shippinglabelgenerate_id)
                 .then((obj) => {
                     setDataforlabel(obj);
                     console.log(obj);

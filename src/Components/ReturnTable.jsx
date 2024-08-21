@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   FaAngleDown,
   FaAngleLeft,
@@ -16,8 +16,8 @@ import {
 import { columns_header as data_header_memo } from "./columns";
 import { Link } from "react-router-dom";
 const ReturnTable = ({ TableData }) => {
+  // Info: ALL Table Functionalties
   const query = useSelector((state) => state.query.query);
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -49,7 +49,6 @@ const ReturnTable = ({ TableData }) => {
     useSortBy,
     usePagination
   );
-
   useEffect(() => {
     setGlobalFilter(query.query);
   }, [query, setGlobalFilter]);
@@ -65,10 +64,6 @@ const ReturnTable = ({ TableData }) => {
       <IoFilter />
     );
   };
-  // const [orderShopifyId, setOrderShopifyId] = useState();
-  // function updateshopifyidstate_func(val) {
-  //   setOrderShopifyId(val);
-  // }
   return (
     <section className="pt-4">
       <div className="bg-[var(--light-cream-background)] py-6 px-8 max-sm:py-2 max-sm:px-4 border-2 border-[var(--border-color)] rounded">
