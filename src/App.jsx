@@ -43,10 +43,10 @@ const App = () => {
             setLoading(false); // Set loading to false after check
           }
         };
-        // checkAuth();
+        checkAuth();
       // }, 10000);
     // } else {
-      setLoading(false);
+      // setLoading(false);
     // }
   }, [dispatch, user]);
 
