@@ -26,7 +26,7 @@ const App = () => {
       // setTimeout(() => {
         const checkAuth = async () => {
           try {
-            const response = await axios.post('http://192.168.1.118:3001/auth/check-auth',{
+            const response = await axios.post('https://framemytv.ikshudigital.com/auth/check-auth',{
               withCredentials: true // Include cookies in the request
             }); // Replace with your actual API endpoint
             const { isAuthenticated } = response.data;
