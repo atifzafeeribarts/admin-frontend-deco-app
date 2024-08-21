@@ -2,8 +2,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 // const baseUrl = "http://192.168.1.118:3001/";
 // axios.defaults.baseURL = "http://localhost:3001";
-axios.defaults.baseURL = "http://192.168.1.118:3001/";
-// axios.defaults.baseURL = "https://framemytv.ikshudigital.com";
+// axios.defaults.baseURL = "http://192.168.1.118:3001/";
+axios.defaults.baseURL = "https://framemytv.ikshudigital.com";
 // Ensure credentials (cookies) are included in requests
 axios.defaults.withCredentials = true;
 const headers = {
