@@ -1,78 +1,35 @@
 // src/routes/Login.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import loginPng from "./../assets/login.png";
+import loginPng from "./../assets/login.webp";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
-import { toast, Bounce } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from 'react-redux';
 import { loginUser, setUser } from '../Redux/Slices/authSlice';
+import ButtonLoadingSpinner from './../Components/ButtonLoadingSpinner';
+import { onErrorToast, onSuccessToast } from "../Services/helper";
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [loginloaded, setloginloaded] = useState(false);
   const [togglePassword, settogglePassword] = useState(true);
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const handleLogin = async (e) => {
     e.preventDefault();
+    setloginloaded(true);
     try {
       const response_loggedin = await dispatch(loginUser({ email, password }));
       if (response_loggedin.payload.originalResponse == 'Login successful') {
         dispatch(setUser(true));
-        toast.success("Login Successfull", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        setloginloaded(false);
+        onSuccessToast("Login Successfull");
         navigate('/dashboard');
       }
     } catch (error) {
-      toast.error('Login Failed: Invalid credentials.');
+      onErrorToast('Login Failed: Invalid credentials.');
     }
+    setloginloaded(false);
   };
-  // const navigator = useNavigate();
-  // const handleLogin_rx = (e) => {
-  //   e.preventDefault();
-  //   login(email, password)
-  //     .then((result) => {
-  //       toast.success("Successfully logged in.", {
-  //         position: "top-right",
-  //         autoClose: 5000,
-  //         hideProgressBar: false,
-  //         closeOnClick: true,
-  //         pauseOnHover: true,
-  //         draggable: true,
-  //         progress: undefined,
-  //         theme: "light",
-  //         transition: Bounce,
-  //       });
-  //       setTimeout(() => {
-  //         navigator("/dashboard");
-  //       }, 1000);
-  //     })
-  //     .catch((error) => {
-  //       toast.error("Inavlid credentials.", {
-  //         position: "top-right",
-  //         autoClose: 2000,
-  //         hideProgressBar: false,
-  //         closeOnClick: true,
-  //         pauseOnHover: true,
-  //         draggable: true,
-  //         progress: undefined,
-  //         theme: "light",
-  //         transition: Bounce,
-  //       });
-  //       // console.log(error);
-  //     });
-  //   // dispatch(adminLogin({ email, password }));
-  // };
-
   return (
     <section className="flex flex-col p-5 justify-center items-center h-[100dvh] bg-[var(--light-cream-background)]">
       <div className="flex max-md:flex-col w-full max-w-[900px] shadow-xl bg-[var(--white-color)] rounded-lg max-md:max-w-full">
@@ -130,11 +87,15 @@ const Login = () => {
               <button
                 type="submit"
                 className="text-[var(--white-color)] bg-[var(--dark-light-brown)] py-[15px] w-full gap-[10px] rounded-lg shadow-xl mt-8"
+                disabled={loginloaded}
               >
-                Login
+                {loginloaded ? (
+                  <ButtonLoadingSpinner sizeClass={"size-6"}/>
+                ) : "Login"}
               </button>
             </form>
           </div>
+
         </div>
       </div>
     </section>

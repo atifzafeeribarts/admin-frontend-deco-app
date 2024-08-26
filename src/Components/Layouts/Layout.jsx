@@ -15,9 +15,9 @@ const Layout = () => {
       <div className="flex-1 fixed top-0 w-full">
         <Navbar toggleSideMenu={toggleSideMenu} />
       </div>
-      <div className="mt-[66px]">
+      <div className="mt-[50px]">
         <Sidebar sideMenuOpen={sideMenuOpen} />
-        <main className="sm:ml-64 h-[calc(100vh-66px)] overflow-auto p-4"> 
+        <main className="sm:ml-64 h-[calc(100dvh-50px)] overflow-auto p-4"> 
           <Outlet />
         </main>
       </div>

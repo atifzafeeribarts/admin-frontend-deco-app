@@ -1,40 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import returnBlack from "./../assets/return-black.png";
-import logoutBlack from "./../assets/logout-black.png";
-import accountBlack from "./../assets/account-black.png";
+import returnBlack from "../../assets/return-black.png";
+import logoutBlack from "../../assets/logout-black.png";
+import accountBlack from "../../assets/account-black.png";
 import { FaAngleDown } from "react-icons/fa6";
-import { logoutApi } from "../Services/api";
-import { toast, Bounce } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from 'react-redux';
-import { logoutUser, logout } from '../Redux/Slices/authSlice';
+import { logoutUser, logout } from '../../Redux/Slices/authSlice';
+import ButtonLoadingSpinner from "../ButtonLoadingSpinner";
+import { onErrorToast, onSuccessToast } from "../../Services/helper";
 
 const Sidebar = ({ sideMenuOpen }) => {
   const navigate = useNavigate();
   // LOGOUT ------------------s
   const dispatch = useDispatch();
+  const [loadedLogoutBTN, setloadedLogoutBTN] = useState(false);
   const handleLogout = async () => {
+    setloadedLogoutBTN(true);
     try {
       let response_loggedout = await dispatch(logoutUser());
       if (response_loggedout.meta.requestStatus == "fulfilled") {
         await dispatch(logout());
-        toast.success("Log Out Successfull", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        onSuccessToast('Logout Successfull');
         navigate("/login");
       }
     } catch (error) {
-      toast.error('Logout failed');
+      onErrorToast('Logout failed');
     }
+    setloadedLogoutBTN(false);
   };
   // LOGOUT END ------------------
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -71,30 +63,6 @@ const Sidebar = ({ sideMenuOpen }) => {
       active_icon: logoutBlack,
     },
   ];
-
-  // const handleLogout_rx = async () => {
-  //   try {
-  //     const response = await logoutApi();
-  //     if (response.status === "success") {
-  //       toast.success("Successfully logged out.", {
-  //         position: "top-right",
-  //         autoClose: 2000,
-  //         hideProgressBar: false,
-  //         closeOnClick: true,
-  //         pauseOnHover: true,
-  //         draggable: true,
-  //         progress: undefined,
-  //         theme: "light",
-  //         transition: Bounce,
-  //       });
-  //       navigate("/login");
-  //     } else {
-  //       console.error("Logout failed");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error during logout:", error);
-  //   }
-  // };
   const [openpopup, setopenpopup] = useState(false);
   const logoutpopup = () => {
     setopenpopup(!openpopup);
@@ -174,7 +142,7 @@ const Sidebar = ({ sideMenuOpen }) => {
                       </button>
                     </div>
                     {/*  POPUP */}
-                    <div id="info-popup" className={`${openpopup ? "block" : "hidden"} -mt-[66px] fixed w-screen top-0 left-0 z-50 h-modal h-screen flex items-center justify-center before:bg-[var(--text-color)] before:opacity-50 before:w-full before:h-full before:absolute`}>
+                    <div id="info-popup" className={`${openpopup ? "block" : "hidden"} -mt-[50px] fixed w-screen top-0 left-0 z-50 h-modal h-screen flex items-center justify-center before:bg-[var(--text-color)] before:opacity-50 before:w-full before:h-full before:absolute`}>
                       <div className="relative p-4 w-full max-w-lg ">
                         <div className="relative max-sm:px-4 p-8 bg-[var(--light-cream-background)] rounded-lg shadow ">
                           <div className="mb-6 text-sm text-[var(--text-color)] ">
@@ -185,8 +153,12 @@ const Sidebar = ({ sideMenuOpen }) => {
                           </div>
                           <div className="justify-between items-center pt-0 space-y-4 sm:flex sm:space-y-0">
                             <div className="items-center space-y-4 sm:space-x-4 sm:flex sm:space-y-0">
-                              <button onClick={logoutpopup} type="button" className="bg-[var(--dark-light-brown)] text-[var(--white-color)] border-[var(--dark-light-brown)] py-2 px-4 w-full rounded-md border-2 text-sm font-medium">Cancel</button>
-                              <button onClick={handleLogout} id="confirm-button" type="button" className="bg-[var(--dark-light-brown)] text-[var(--white-color)] border-[var(--dark-light-brown)] py-2 px-4 w-full rounded-md border-2 text-sm font-medium">Confirm</button>
+                              <button onClick={logoutpopup} type="button" className="bg-[var(--dark-light-brown)] text-[var(--white-color)] border-[var(--dark-light-brown)] py-2 px-4 w-full rounded-md border-2 text-sm font-medium min-w-[100px]">Cancel</button>
+                              <button onClick={loadedLogoutBTN ? null : handleLogout} id="confirm-button" type="button" className="bg-[var(--dark-light-brown)] text-[var(--white-color)] border-[var(--dark-light-brown)] py-2 px-4 min-w-[100px] w-full rounded-md border-2 text-sm font-medium">
+                                {loadedLogoutBTN ? (
+                                  <ButtonLoadingSpinner sizeClass={"size-5"}/>
+                                ) : "Confirm"}
+                              </button>
                             </div>
                           </div>
                         </div>

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import SearchBar from "./../Components/SearchBar";
-import Card from "../Components/Card";
-import BarChart from "./../Components/Charts/BarChart";
-import PieChart from "../Components/Charts/PieChart";
-const Home = () => {
-  const [sideMenuOpen, setSideMenuOpen] = useState(false);
-  const toggleSideMenu = () => {
-    setSideMenuOpen(!sideMenuOpen);
-  };
+import Card from "../Components/Dashboard/Card";
+import BarChart from "../Components/Dashboard/Charts/BarChart";
+import PieChart from "../Components/Dashboard/Charts/PieChart";
+const Dashboard = () => {
+  // const [sideMenuOpen, setSideMenuOpen] = useState(false);
+  // const toggleSideMenu = () => {
+  //   setSideMenuOpen(!sideMenuOpen);
+  // };
   const CardsData = {
     totalRequests: {
       icon: "MdOutlineShoppingBag ",
@@ -32,7 +31,6 @@ const Home = () => {
   };
   return (
     <div>
-      {/* <SearchBar /> */}
       <div className="gap-4 flex flex-col md:flex-row md:justify-between pt-6 max-lg:flex-wrap">
         <Card data={CardsData.totalRequests} />
         <Card data={CardsData.pending} />
@@ -47,4 +45,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;

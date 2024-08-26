@@ -1,7 +1,6 @@
-// TabButton.jsx
 import React from 'react';
 
-const TabButton = ({ onClick, isActive, children , fortheref}) => {
+const TabButton = ({ onClick, isActive, children, fortheref }) => {
   const activeClass = isActive
     ? 'bg-[var(--dark-light-brown)] text-[var(--white-color)] border-[var(--dark-light-brown)]'
     : 'text-[var(--data-gray-color)] border-[var(--border-color)]';

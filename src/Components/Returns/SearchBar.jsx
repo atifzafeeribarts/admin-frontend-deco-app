@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { MdSearch } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { setGlobalFilter } from "./../Redux/Slices/globalFilterSlice";
+import { setGlobalFilter } from "../../Redux/Slices/globalFilterSlice";
 
-function SearchBar({ filter, setFilter }) {
+function SearchBar() {
   const dispatch = useDispatch();
   const query = useSelector((state) => state.query.query);
   const [data, setdata] = useState(query);
@@ -22,7 +22,7 @@ function SearchBar({ filter, setFilter }) {
         type="text"
         placeholder="Search"
         className="p-4 w-full rounded-lg rounded-r-none border-2 border-[var(--dark-light-brown)] bg-[var(--light-cream-background)] outline-none focus:outline-none focus:border-[var(--dark-light-brown)] appearance-none text-sm max-sm:p-2"
-        // value={query.query}
+        value={query.query}
         onChange={(e) => handleSearch(e)}
       />
       <p

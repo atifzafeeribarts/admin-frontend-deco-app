@@ -4,7 +4,7 @@ import ReturnTable from "./ReturnTable";
 import SearchBar from "./SearchBar";
 import TabButton from "./TabButtons";
 import TableSkeleton from "./TableSkeleton";
-import { countReturns } from "../Services/api";
+import { countReturns } from "../../Services/api";
 function TablesAndSearch({ TableData, TabName, setTabName, isTableLoaded }) {
   const tabs = [
     { name: "ALL", label: "All" },
@@ -35,14 +35,14 @@ function TablesAndSearch({ TableData, TabName, setTabName, isTableLoaded }) {
     countReturns().then((data) => {
       setcountData(data)
     })
-  }, [])
-  
+  }, [TabName])
+
   /* ----- END - Taking Data from Child Components ----- */
   return (
     <>
       <div className="flex max-md:flex-col max-sm:gap-4 gap-6 mb-6">
         <div className="sm:w-[40%]">
-          <SearchBar filter={globalFilter} setFilter={setGlobalFilter} />
+          <SearchBar />
         </div>
         <div className="sm:w-[60%] flex justify-between items-center gap-2 max-lg:[&>*]:w-[48%]  lg:[&>*]:h-[100%] max-lg:flex-wrap">
           {tabs.map((tab) => (
@@ -50,7 +50,7 @@ function TablesAndSearch({ TableData, TabName, setTabName, isTableLoaded }) {
               key={tab.name}
               onClick={() => {
                 setTabName(tab.name);
-                setSearchParams({["status"]: tab.name})
+                setSearchParams({ ["status"]: tab.name })
               }}
               isActive={TabName === tab.name}
             >

@@ -35,7 +35,6 @@ const ReturnTable = ({ TableData }) => {
     {
       columns: data_header_memo,
       data: TableData,
-      // initialState: { globalFilter: query }, // Initialize globalFilter with query
       initialState: {
         sortBy: [
           {
@@ -67,7 +66,7 @@ const ReturnTable = ({ TableData }) => {
   return (
     <section className="pt-4">
       <div className="bg-[var(--light-cream-background)] py-6 px-8 max-sm:py-2 max-sm:px-4 border-2 border-[var(--border-color)] rounded">
-        <div className="overflow-auto  xl:max-h-[calc(100dvh-330px)]">
+        <div className="overflow-auto  xl:max-h-[calc(100dvh-310px)]">
           <table
             className="border-collapse w-full relative"
             {...getTableProps()}

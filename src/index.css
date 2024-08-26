@@ -5,3 +5,6 @@
 .at-return-card{
    @apply rounded-md bg-[var(--light-cream-background)] p-5 border-[var(--border-color)] border-2 max-sm:px-4;
 }
+.body{
+   @apply transition-all scroll-smooth;
+}

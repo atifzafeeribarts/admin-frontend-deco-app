@@ -1,4 +1,4 @@
-import { format, parseISO  } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 export const columns_header = [
     {
@@ -19,13 +19,23 @@ export const columns_header = [
     },
     {
         Header: "Date of purchase",
-        accessor: "purchasedAt",
-        Cell: (row) => format(parseISO(row.value), 'MM/dd/yyyy'),
+        accessor: (value) => {
+            if(value.purchasedAt){
+                return format(parseISO(value.purchasedAt), 'MM/dd/yyyy');
+            }else{
+                return "N/A";
+            }
+        },
     },
     {
         Header: "Date of request",
-        accessor: "requestedAt",
-        Cell: (row) => format(parseISO(row.value), 'MM/dd/yyyy'),
+        accessor: (value) => {
+            if(value.requestedAt){
+                return format(parseISO(value.requestedAt), 'MM/dd/yyyy');
+            }else{
+                return "--/--/----";
+            }
+        },
     },
     {
         Header: "Customer name",
@@ -36,8 +46,11 @@ export const columns_header = [
         accessor: "returnReason",
     },
     {
-        Header: "Amount($)",
-        accessor: "variantPrice",
+        Header: "Amount",
+        // accessor: "variantPrice",
+        accessor: (value) => {
+            return `$${value.variantPrice}`;
+        },
     },
     {
         Header: "Return Status",

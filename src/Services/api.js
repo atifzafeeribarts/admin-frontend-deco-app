@@ -1,28 +1,34 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-// const baseUrl = "http://192.168.1.118:3001/";
 // axios.defaults.baseURL = "http://localhost:3001";
-// axios.defaults.baseURL = "http://192.168.1.118:3001/";
-axios.defaults.baseURL = "https://framemytv.ikshudigital.com";
+axios.defaults.baseURL = "http://192.168.1.118:3001/";
+// axios.defaults.baseURL = "https://framemytv.ikshudigital.com";
 // Ensure credentials (cookies) are included in requests
 axios.defaults.withCredentials = true;
 const headers = {
   "Content-Type": "application/json",
 };
-// axios.interceptors.response.use(
-//   response => response,
-//   error => {
-//     if (error.response && error.response.status === 401) {
-//       // Show toast notification for session expiration
-//       toast.error("Session expired :( Redirecting to login page...");
-//       // Redirect to login page after a short delay to allow the toast to show
-//       setTimeout(() => {
-//         window.location.href = '/login'; // Or use useHistory hook in React Router
-//       }, 2000);
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+const toastId = "session-expired";
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response && error.response.status === 401) {
+      // Redirect to login page after a short delay to allow the toast to show
+      if (window.location.pathname !== '/login') {
+        if (!toast.isActive(toastId)) {
+          // Show toast notification for session expiration
+          toast.error("Session expired :( Redirecting to login page...", {
+            toastId: toastId,
+          });
+        }
+        setTimeout(() => {
+          window.location.href = '/login'; // Or use useHistory hook in React Router
+        }, 2000);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 // store = frame-my-tv // deco-tv-frame
 async function login(email, password) {
@@ -46,6 +52,34 @@ async function logoutApi() {
     return response.data;
   } catch (error) {
     console.error("failed to logout:", error);
+    throw error;
+  }
+}
+async function checkAuthAPI() {
+  try {
+    const response = await axios.post(
+      `/auth/check-auth`,
+      {
+        withCredentials: true // Include cookies in the request
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error("Check Auth Error:", error.message);
+    throw error;
+  }
+}
+async function countReturns(store) {
+  try {
+    const response = await axios.get(
+      `/admin/count-returns`,
+      {
+        headers: headers,
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error("Error Fetching Count Data:", error.message);
     throw error;
   }
 }
@@ -183,30 +217,37 @@ async function returnAdditionalInformationUpdate(store, return_id, additionalInf
     throw error;
   }
 }
-async function countReturns(store) {
+async function returnRestockingProduct(store, reverseFulfillmentItemId, returnID) {
   try {
-    const response = await axios.get(
-      `/admin/count-returns`,
+    const response = await axios.post(
+      `/admin/return/restock`,
+      {
+        reverseFulfillmentOrderLineItemId: reverseFulfillmentItemId,
+        locationId: 76622725370,
+        returnId : returnID
+      },
       {
         headers: headers,
       }
     );
     return response.data.data;
   } catch (error) {
-    console.error("Error Fetching Count Data:", error.message);
+    console.error("Error Restocking Product:", error.message);
     throw error;
   }
 }
 export {
-  fetchAllReturns,
   login,
-  returnDetailsAPI,
   logoutApi,
+  checkAuthAPI,
+  countReturns,
+  fetchAllReturns,
+  returnDetailsAPI,
   approveRequestApi,
   declineRequestApi,
   closeReturnApi,
   refundRequestApi,
   returnOrderTagsUpdate,
   returnAdditionalInformationUpdate,
-  countReturns,
+  returnRestockingProduct,
 };

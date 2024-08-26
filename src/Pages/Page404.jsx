@@ -3,7 +3,7 @@ import image404 from '../assets/404.png';
 import { Link } from 'react-router-dom';
 const Page404 = () => {
     return (
-        <section className="bg-[var(--light-cream-background)] dark:bg-gray-900 h-[100dvh]">
+        <section className="bg-[var(--light-cream-background)] h-[100dvh]">
             <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
                 <div className="mx-auto max-w-screen-sm text-center">
                     <img src={image404} width="300" height="400" className="m-auto" />

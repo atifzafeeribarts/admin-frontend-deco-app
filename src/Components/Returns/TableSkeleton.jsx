@@ -4,8 +4,9 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 const TableSkeleton = () => {
   return (
+    <section className="pt-4">
     <div className="bg-[var(--light-cream-background)] py-6 px-8 max-sm:py-2 max-sm:px-4 border-2 border-[var(--border-color)] rounded">
-        <div className="overflow-auto  xl:max-h-[calc(100dvh-330px)]">
+        <div className="overflow-auto  xl:max-h-[calc(100dvh-310px)]">
         <table className="border-collapse w-full relative">
           <thead className="border-b sticky top-0">
             <tr className="border-b-2 border-[var(--row-bottom-border-color)] bg-[var(--light-cream-background)]">
@@ -30,6 +31,7 @@ const TableSkeleton = () => {
         </table>
       </div>
     </div>
+    </section>
   ); 
 };
 

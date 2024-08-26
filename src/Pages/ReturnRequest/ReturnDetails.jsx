@@ -4,9 +4,12 @@ import { FaAngleRight, FaPlus } from "react-icons/fa6";
 import { TbCirclePlus } from "react-icons/tb";
 import { RxCross1 } from "react-icons/rx";
 import { ImNewTab } from "react-icons/im";
-import { MdError } from "react-icons/md";
+import { MdError, MdOutlineKeyboardBackspace } from "react-icons/md";
+import { AiOutlineStock } from "react-icons/ai";
+import { CiMoneyCheck1 } from "react-icons/ci";
 import { useLocation } from "react-router-dom";
-import ReturnDetailSkeleton from "./ReturnDetailSkeleton";
+import ReturnDetailSkeleton from "../../Components/Returns/ReturnDetailSkeleton";
+import { useNavigate } from "react-router-dom";
 import {
   returnDetailsAPI,
   approveRequestApi,
@@ -15,15 +18,16 @@ import {
   closeReturnApi,
   returnOrderTagsUpdate,
   returnAdditionalInformationUpdate,
+  returnRestockingProduct,
 } from "../../Services/api";
-import { toast, Bounce } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import ModalImage from "react-modal-image";
 import attached_images_1 from "../../assets/attached-image-1.jpg";
 import attached_images_2 from "../../assets/attached-image-2.jpg";
 import attached_images_3 from "../../assets/attached-image-3.jpg";
-import { debounce, sliceURL } from "../../Services/helper";
+import { debounce, onErrorToast, onSuccessToast, sliceURL } from "../../Services/helper";
+import ButtonLoadingSpinner from '../../Components/ButtonLoadingSpinner';
 const ReturnDetails = () => {
+  const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [option, setOption] = useState("upload");
   const [isLoading, setIsLoading] = useState(true);
@@ -121,7 +125,7 @@ const ReturnDetails = () => {
     });
   };
   const addTag = async (tag) => {
-    if (tag) {
+    if (tag.trim()) {
       setorder_tags((prevTags) => {
         const updatedTags = [...prevTags, tag];
         // Call the API to save the updated tags
@@ -135,30 +139,10 @@ const ReturnDetails = () => {
       const { storeName, returnId } = sliceURL(pathname);
       const resp = await returnOrderTagsUpdate(storeName, data?.shopifyReturnId, updatedTags);
       if (resp) {
-        toast.success(`Tags ${removedORAdded == "removed" ? "removed" : "added"} successfully`, {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        onSuccessToast(`Tags ${removedORAdded == "removed" ? "removed" : "added"} successfully`);
       }
     } catch (error) {
-      toast.error("Something went wrong.", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      onErrorToast("Something went wrong.");
     }
   };
   const handleInputChange = (e) => {
@@ -175,35 +159,18 @@ const ReturnDetails = () => {
   const imageUrls = [attached_images_1, attached_images_2, attached_images_3];
 
   // Info: Fetching ApproveRequest API Data
+  const [loadingApprove, setloadingApprove] = useState(false);
   const handleApproveRequest = () => {
+    setloadingApprove(true);
     const { storeName, orderId } = sliceURL(pathname);
     approveRequestApi(storeName, data?.shopifyReturnId)
       .then((obj) => {
-        toast.success("Request approved successfully", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        onSuccessToast("Request approved successfully");
         setdataUpdated(true);
-      })
-      .catch((err) => {
-        toast.error("Something error has been occurerd.", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        setloadingApprove(false);
+      }).catch((err) => {
+        onErrorToast("Something error has been occurerd.");
+        setloadingApprove(false);
       });
   };
   // Info: Fetching DeclineRequest API Data
@@ -211,15 +178,16 @@ const ReturnDetails = () => {
   const declineDropdown_option = useRef(null);
   const admin_decline_reason = useRef(null);
   const [declinePopUp, setDeclinePopUp] = useState(false);
+  const [loadingDecline, setloadingDecline] = useState(false);
   const [declineErrorMessage, setDeclineErrorMessage] = useState("");
   const openDecline_pop_up = () => {
     setDeclinePopUp(!declinePopUp);
   };
   const handleDeclineRequest = async () => {
-    // console.log(decline_reason.current.value == "", declineDropdown_option.current.value == "Choose Your Reason"); 
     if (decline_reason.current.value == "" || declineDropdown_option.current.value == "Decline Reason") {
       setDeclineErrorMessage("Please Enter Decline Reason");
     } else {
+      setloadingDecline(true);
       try {
         const { storeName, orderId } = sliceURL(pathname);
         setDeclineErrorMessage("");
@@ -232,79 +200,45 @@ const ReturnDetails = () => {
         );
         if (res) {
           openDecline_pop_up();
-          toast.success("Decline Successfully", {
-            position: "top-right",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          });
+          onSuccessToast("Decline Successfully");
           setdataUpdated(true);
+          setloadingDecline(false);
         }
       } catch (error) {
-        toast.error("Something error has been occurerd.", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        onErrorToast("Something error has been occurerd.");
         setDeclineErrorMessage(error.response.data.message);
+        setloadingDecline(false);
       }
     }
   };
 
   // Info: Closing the Return
+  const [loadingCloseReturn, setloadingCloseReturn] = useState(false);
   const handleCloseReturn = async () => {
+    setloadingCloseReturn(true);
     const { storeName, returnId } = sliceURL(pathname);
     const resp = await closeReturnApi(storeName, data?.shopifyReturnId);
     try {
       if (resp) {
-        toast.success("Return Closed Successfully",
-          {
-            position: "top-right",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          }
-        );
+        onSuccessToast("Return Closed Successfully");
         setdataUpdated(true);
-      } 
+        setloadingCloseReturn(false);
+      }
     } catch (error) {
-      toast.error("Something error has been occurerd.", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      onErrorToast("Something error has been occurerd.");
+      setloadingCloseReturn(false);
     }
   };
 
   // Info: Fetching RefundRequest API Data
   const refund_amount_input = useRef(null);
   const [refundError, setRefundError] = useState("");
+  const [loadingRefund, setloadingRefund] = useState(false);
   const handleRefundRequest = async () => {
     if (refund_amount_input.current.value == "") {
       setRefundError("Please Enter Refund Amount");
     } else {
+      setloadingRefund(true);
       try {
         setRefundError("");
         const { storeName, orderId } = sliceURL(pathname);
@@ -316,37 +250,14 @@ const ReturnDetails = () => {
           refund_amount_input.current.value
         );
         if (resp?.returnRefund?.refund?.totalRefundedSet?.shopMoney?.amount) {
-          toast.success(
-            "Refunded amount of $" +
-            resp?.returnRefund?.refund?.totalRefundedSet?.shopMoney?.amount +
-            " Successfully",
-            {
-              position: "top-right",
-              autoClose: 2000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              transition: Bounce,
-            }
-          );
+          onSuccessToast("Refunded amount of $" + resp?.returnRefund?.refund?.totalRefundedSet?.shopMoney?.amount + " Successfully");
           setdataUpdated(true);
+          setloadingRefund(false);
         }
       } catch (error) {
-        toast.error("Something error has been occurerd.", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        onErrorToast("Something error has been occurerd.");
         setRefundError(error?.response?.data?.error?.data[0]?.message);
+        setloadingRefund(false);
       }
     }
   };
@@ -364,7 +275,24 @@ const ReturnDetails = () => {
     }
   }
   const debouncedHandleAdditionalInformation = debounce(handleAdditionalInformation, 1000);
-
+  // Info: Restocking the Product
+  const [loadingRestockItem, setloadingRestockItem] = useState(false);
+  const handleRestockItem = async () => {
+    setloadingRestockItem(true);
+    try {
+      const { storeName, returnId } = sliceURL(pathname);
+      const resp = await returnRestockingProduct(storeName, data?.reverseFulfillmentOrderLineItemId, data?.shopifyReturnId);
+      if (resp) {
+        onSuccessToast("Item Restocked Successfully");
+        setdataUpdated(true);
+        setloadingRestockItem(false);
+      }
+    } catch (err) {
+      console.log(err);
+      onErrorToast("Item Restocking Failed");
+      setloadingRestockItem(false);
+    }
+  }
   // -------------------------   Return JSX DATA -------------------------
   if (isLoading) {
     return <ReturnDetailSkeleton />;
@@ -372,7 +300,12 @@ const ReturnDetails = () => {
     return (
       <>
         <section>
-          <div className="flex items-center gap-x-7 gap-y-3 justify-between items-center text-sm text-[var(--text-color)] py-5 max-lg:flex-col">
+          <div className="mt-4 mb-2 cursor-pointer hover:-ml-[4px] transition-all flex gap-2 items-center font-medium w-fit"
+            onClick={() => navigate(-1)}
+          >
+            <MdOutlineKeyboardBackspace size={20} /> <span>Returns</span>
+          </div>
+          <div className="flex items-center gap-x-7 gap-y-3 justify-between text-sm text-[var(--text-color)] pb-6 max-lg:flex-col">
             <div className="w-[50%] flex items-center gap-x-8 gap-y-2 flex-wrap max-lg:w-[70%] max-sm:w-full max-lg:justify-center max-sm:justify-start">
               <div className="flex items-center gap-2">
                 <span>Return Request</span>
@@ -384,30 +317,65 @@ const ReturnDetails = () => {
                 </span>{" "}
                 <span><a href={`https://admin.shopify.com/store/${shopify_store_name}/orders/${data.shopifyOrderId}`} target="_blank" className="hover:underline underline-offset-2">Order {data.orderName}</a></span>
               </div>
-              <div>
+              {/* Status */}
+              <div className="text-sm flex gap-2 flex-wrap justify-center max-sm:justify-start">
                 {data.status == "CLOSED" ? (
-                  <p className="text-[var(--text-color)] text-base font-medium flex gap-2 items-center uppercase">
+                  <p className="text-[var(--text-color)] font-medium flex gap-2 items-center uppercase">
                     <span className="flex w-3 h-3 bg-green-500 rounded-full"></span>
                     <span className="">Returned</span>
                   </p>
                 ) : data.status == "DECLINED" ? (
-                  <p className="text-[var(--text-color)] text-base font-medium flex gap-2 items-center uppercase">
+                  <p className="text-[var(--text-color)] font-medium flex gap-2 items-center uppercase">
                     <span className="flex w-3 h-3 bg-red-500 rounded-full"></span>
                     <span className="">Declined</span>
                   </p>
+                ) : data.status == "REQUESTED" ? (
+                  <p className="text-[var(--text-color)] font-medium flex gap-2 items-center uppercase">
+                    <span className="flex w-3 h-3 bg-gray-500 rounded-full"></span>
+                    <span className="">Requested</span>
+                  </p>
                 ) : data.status == "OPEN" ? (
-                  <p className="text-[var(--text-color)] text-base font-medium flex gap-2 items-center uppercase">
+                  <p className="text-[var(--text-color)] font-medium flex gap-2 items-center uppercase">
                     <span className="flex w-3 h-3 bg-orange-300 rounded-full"></span>
                     <span className="">In Progress</span>
                   </p>
                 ) : null}
+                {data?.isRestocked ? (
+                  <p className="text-[var(--text-color)] font-medium flex gap-2 items-center uppercase">
+                    <AiOutlineStock size={18} />
+                    <span>Restocked</span>
+                  </p>
+                ) : null}
+                {data?.refundStatus == "Partially refunded" || data?.refundStatus == "Refunded" ? (
+                  <p className="text-[var(--text-color)] font-medium flex gap-2 items-center uppercase">
+                    <CiMoneyCheck1 size={22} />
+                    {
+                      data?.refundStatus == "Refunded" ? (
+                        <span>Refunded</span>
+                      ) : (
+                        <span>Partially refunded</span>
+                      )
+                    }
+                  </p>
+                ) : null}
               </div>
+
             </div>
-            <div className="w-[50%] flex flex-col items-end max-lg:w-[70%] max-sm:w-full max-lg:items-center">
-              {/* Status and Button */}
+            <div className="w-[50%] flex gap-5 justify-end max-lg:w-[70%] max-sm:w-full max-lg:justify-center ">
+              {/* Approve, Decline, Closed and Restock Buttons */}
+              {data?.status == "OPEN" || data?.status == "CLOSED" ? (
+                data?.isRestocked ? null : (
+                  <button
+                    onClick={loadingRestockItem ? null : handleRestockItem}
+                    className="px-2 py-3 border-[var(--dark-light-brown)] border-2 rounded-lg bg-[var(--light-cream-background)] text-[var(--dark-light-brown)] font-medium w-[200px] block"
+                  >
+                    {loadingRestockItem ? <ButtonLoadingSpinner sizeClass={"size-5"} /> : "Restock Item"}
+                  </button>
+                )
+              ) : null}
               {data?.status == "REQUESTED" ? (
                 <>
-                  <div className="flex gap-5 w-full [&>*]:w-[200px] [&>*]:rounded-lg  [&>*]:border-2 [&>*]:border-[var(--dark-light-brown)] [&>*]:px-2 [&>*]:py-3 [&>*]outline-none font-medium justify-end  max-lg:items-center">
+                  <div className="flex gap-5 w-full [&>*]:w-[200px] [&>*]:rounded-lg  [&>*]:border-2 [&>*]:border-[var(--dark-light-brown)] [&>*]:px-2 [&>*]:py-3 [&>*]outline-none font-medium justify-end  max-lg:justify-center">
                     <button
                       className="bg-[var(--light-cream-background)] text-[var(--dark-light-brown)]"
                       onClick={openDecline_pop_up}
@@ -416,18 +384,18 @@ const ReturnDetails = () => {
                     </button>
                     <button
                       className="bg-[var(--dark-light-brown)] text-[var(--white-color)]"
-                      onClick={handleApproveRequest}
+                      onClick={loadingApprove ? null : handleApproveRequest}
                     >
-                      Approve
+                      {loadingApprove ? <ButtonLoadingSpinner sizeClass={"size-5"} /> : "Approve"}
                     </button>
                   </div>
                 </>
               ) : data?.status == "OPEN" ? (
                 <button
-                  onClick={handleCloseReturn}
+                  onClick={loadingCloseReturn ? null : handleCloseReturn}
                   className="px-2 py-3 border-[var(--dark-light-brown)] border-2 rounded-lg bg-[var(--dark-light-brown)] text-[var(--white-color)] font-medium w-[200px] block"
                 >
-                  Close Return
+                  {loadingCloseReturn ? <ButtonLoadingSpinner sizeClass={"size-5"} /> : "Close Return"}
                 </button>
               ) : null}
             </div>
@@ -620,10 +588,10 @@ const ReturnDetails = () => {
                           </p>
                         ) : null}
                         <button
-                          onClick={handleRefundRequest}
-                          className="ml-auto block bg-[var(--dark-light-brown)] uppercase text-sm mt-4 py-3 px-5 text-[var(--white-color)] rounded leading-none"
+                          onClick={loadingRefund ? null : handleRefundRequest}
+                          className="ml-auto block bg-[var(--dark-light-brown)] uppercase text-sm mt-4 py-3 px-5 text-[var(--white-color)] rounded leading-none min-w-[100px]"
                         >
-                          Refund
+                          {loadingRefund ? <ButtonLoadingSpinner sizeClass={"size-4"} /> : "Refund"}
                         </button>
                       </>
                     ) : null}
@@ -874,8 +842,8 @@ const ReturnDetails = () => {
                       <tr>
                         <th>Phone Number</th>
                         <td>
-                          {data.contactInformation.phone ? (
-                            data.contactInformation.phone
+                          {data.contactInformation?.phone ? (
+                            data.contactInformation?.phone
                           ) : (
                             <span className="text-red-500">
                               No Phone Number
@@ -901,20 +869,20 @@ const ReturnDetails = () => {
                       <tr>
                         <th>Billing Address</th>
                         <td>
-                          {data.shippingAddress.address1 +
-                            data.shippingAddress.address2 +
-                            data.shippingAddress.city +
-                            data.shippingAddress.country +
-                            data.shippingAddress.zip ===
-                            data.billingAddress.address1 +
-                            data.billingAddress.address2 +
-                            data.billingAddress.city +
-                            data.billingAddress.country +
-                            data.billingAddress.zip
+                          {data.shippingAddress?.address1 +
+                            data.shippingAddress?.address2 +
+                            data.shippingAddress?.city +
+                            data.shippingAddress?.country +
+                            data.shippingAddress?.zip ===
+                            data.billingAddress?.address1 +
+                            data.billingAddress?.address2 +
+                            data.billingAddress?.city +
+                            data.billingAddress?.country +
+                            data.billingAddress?.zip
                             ? "same as shipping address"
-                            : `${data.billingAddress.address1}, ${data.billingAddress.address2
-                            }${data.billingAddress.address2 ? `,` : null} ${data.billingAddress.city
-                            }, ${data.billingAddress.country}, ${data.billingAddress.zip
+                            : `${data.billingAddress?.address1}, ${data.billingAddress?.address2
+                            }${data.billingAddress?.address2 ? `,` : null} ${data.billingAddress?.city
+                            }, ${data.billingAddress?.country}, ${data.billingAddress?.zip
                             }`}
                         </td>
                       </tr>
@@ -1071,17 +1039,17 @@ const ReturnDetails = () => {
                     <button
                       onClick={openDecline_pop_up}
                       type="button"
-                      className="bg-[var(--dark-light-brown)] text-[var(--white-color)] border-[var(--dark-light-brown)] py-2 px-4 w-full rounded-md border-2 text-sm font-medium"
+                      className="bg-[var(--dark-light-brown)] text-[var(--white-color)] border-[var(--dark-light-brown)] py-2 px-4 w-full rounded-md border-2 text-sm font-medium min-w-[90px]"
                     >
                       Cancel
                     </button>
                     <button
-                      onClick={handleDeclineRequest}
+                      onClick={loadingDecline ? null : handleDeclineRequest}
                       id="confirm-button"
                       type="button"
-                      className="bg-[var(--dark-light-brown)] text-[var(--white-color)] border-[var(--dark-light-brown)] py-2 px-4 w-full rounded-md border-2 text-sm font-medium"
+                      className="bg-[var(--dark-light-brown)] text-[var(--white-color)] border-[var(--dark-light-brown)] py-2 px-4 w-full rounded-md border-2 text-sm font-medium min-w-[90px]"
                     >
-                      Decline
+                      {loadingDecline ? <ButtonLoadingSpinner sizeClass={"size-5"} /> : "Decline"}
                     </button>
                   </div>
                 </div>
