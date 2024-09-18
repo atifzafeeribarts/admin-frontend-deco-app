@@ -1,6 +1,6 @@
 import React from "react";
 import returImg from "../../assets/return.png";
-import adminImg from "../../assets/admin.png";
+import Avatar from 'react-avatar';
 import { HiMenuAlt2 } from "react-icons/hi";
 
 const Navbar = ({ toggleSideMenu }) => {
@@ -16,28 +16,16 @@ const Navbar = ({ toggleSideMenu }) => {
             <span className="sr-only">Open sidebar</span>
             <HiMenuAlt2 size={20} color="var(--white-color)"/>
           </button>
-          <a
-            // href="https://flowbite.com/"
-            className="flex items-center space-x-3 rtl:space-x-reverse"
-          >
-            <img src={returImg} className="h-8" alt="Flowbite Logo" />
-            <span className="self-center text-xl font-semibold whitespace-nowrap text-[var(--text-color)] max-sm:text-lg">
+          <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+            <img src="/ReturnRanger.png" className="h-8" />
+            {/* <span className="self-center text-xl font-semibold whitespace-nowrap text-[var(--text-color)] max-sm:text-lg">
               Return Ranger
-            </span>
+            </span> */}
           </a>
-          <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse gap-4">
-            <button
-              type="button"
-              className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 "
-            >
-              <span className="sr-only">Open user menu</span>
-              <img
-                className="w-8 h-8 rounded-full"
-                src={adminImg}
-                alt="user photo"
-              />
+          <div className="">
+            <button type="button">
+              <Avatar name="Admin" round className="text-sm ibat-avatar" size="30"/>
             </button>
-            {/* <p>Admin</p> */}
           </div>
         </div>
       </nav>

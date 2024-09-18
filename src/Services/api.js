@@ -1,9 +1,8 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-// axios.defaults.baseURL = "http://localhost:3001";
-axios.defaults.baseURL = "http://192.168.1.118:3001/";
-// axios.defaults.baseURL = "https://framemytv.ikshudigital.com";
-// Ensure credentials (cookies) are included in requests
+const baseURL = "http://192.168.1.118:3001/";
+// const baseURL = "https://api.returnranger.ikshudigital.com/";
+axios.defaults.baseURL = baseURL;
 axios.defaults.withCredentials = true;
 const headers = {
   "Content-Type": "application/json",
@@ -22,7 +21,7 @@ axios.interceptors.response.use(
           });
         }
         setTimeout(() => {
-          window.location.href = '/login'; // Or use useHistory hook in React Router
+          window.location.href = '/login';
         }, 2000);
       }
     }
@@ -69,6 +68,7 @@ async function checkAuthAPI() {
     throw error;
   }
 }
+// Info: Returns Table API
 async function countReturns(store) {
   try {
     const response = await axios.get(
@@ -98,6 +98,7 @@ async function fetchAllReturns(status, store) {
     throw error;
   }
 }
+//Info: Return Details API
 async function returnDetailsAPI(store, orderId) {
   try {
     const response = await axios.get(
@@ -128,11 +129,12 @@ async function approveRequestApi(store, returnId) {
     throw error;
   }
 }
-async function declineRequestApi(store, returnId, decline_reason_note, decline_reason_option, admin_decline_reason) {
+async function declineRequestApi(store, returnId, client_decline_reason_note, decline_reason_option, admin_decline_reason) {
+  console.log("object");
   try {
     const response = await axios.post(
       `/admin/decline-request`,
-      { returnId: returnId, declineReason: admin_decline_reason },
+      { returnId: returnId, declineReason: decline_reason_option, adminNote:  admin_decline_reason, customerNote: client_decline_reason_note},
       {
         headers: headers,
       }
@@ -223,8 +225,10 @@ async function returnRestockingProduct(store, reverseFulfillmentItemId, returnID
       `/admin/return/restock`,
       {
         reverseFulfillmentOrderLineItemId: reverseFulfillmentItemId,
-        locationId: 76622725370,
-        returnId : returnID
+        locationId: 76622725370, // -- for devStore framemytvapp
+        // locationId: 90704478516, // -- for Sandbox decoTV
+        // locationId: 31827722285, // -- Live DecoTV
+        returnId: returnID
       },
       {
         headers: headers,
@@ -235,6 +239,33 @@ async function returnRestockingProduct(store, reverseFulfillmentItemId, returnID
     console.error("Error Restocking Product:", error.message);
     throw error;
   }
+}
+// Info: Create Return API
+const orderDetails = async (ordernumber, email, storename) => {
+  const jsonbody = {
+    name: ordernumber,
+    email: email,
+    storename: storename,
+  };
+  const endPoint = `/customer/order`;
+  const response = await axios.post(endPoint, jsonbody);
+  return response.data;
+};
+const submitReturnRequest = async (dataJson, storename) => {
+  const endPoint = `/admin/return/create`;
+  const formData = { 'orderId': dataJson.orderId, 'typeofReturn': dataJson.typeofReturn, 'returnLineItems': dataJson.returnLineItems };
+  const response = await axios.post(endPoint, formData);
+
+  return response.data;
+};
+// Info: Notifications API
+const notificationDetails = async (id) => {
+  const response = await axios.get(`/admin/notifications/${id}`);
+  return response.data; 
+}
+const notificationUpdate = async (reqBody) => {
+  const response = await axios.put(`/admin/notifications/`,reqBody);
+  return response.data;
 }
 export {
   login,
@@ -250,4 +281,9 @@ export {
   returnOrderTagsUpdate,
   returnAdditionalInformationUpdate,
   returnRestockingProduct,
+  orderDetails,
+  submitReturnRequest,
+  notificationDetails,
+  notificationUpdate,
+  baseURL
 };

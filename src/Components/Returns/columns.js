@@ -2,10 +2,6 @@ import { format, parseISO } from "date-fns";
 
 export const columns_header = [
     {
-        Header: "Serial No.",
-        accessor: "id",
-    },
-    {
         Header: "Return ID",
         accessor: "shopifyReturnId",
     },

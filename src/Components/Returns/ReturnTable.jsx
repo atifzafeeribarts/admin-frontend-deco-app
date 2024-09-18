@@ -35,14 +35,14 @@ const ReturnTable = ({ TableData }) => {
     {
       columns: data_header_memo,
       data: TableData,
-      initialState: {
-        sortBy: [
-          {
-            id: 'orderName',
-            desc: true
-          }
-        ]
-      }
+      // initialState: {
+      //   sortBy: [
+      //     {
+      //       id: 'orderName',
+      //       desc: true
+      //     }
+      //   ]
+      // }
     },
     useGlobalFilter,
     useSortBy,
@@ -80,7 +80,7 @@ const ReturnTable = ({ TableData }) => {
                 >
                   {headerGroup.headers.map((column, idx) => (
                     <th
-                      className="text-left p-4 text-base text-[var(--text-color)] max-sm:p-2 font-medium first:hidden [&:nth-child(2)]:hidden [&:nth-child(3)]:hidden"
+                      className="text-left p-4 text-base text-[var(--text-color)] max-sm:p-2 font-medium first:hidden [&:nth-child(2)]:hidden"
                       {...column.getHeaderProps(column.getSortByToggleProps())}
                       key={"coulums" + idx}
                     >
@@ -102,7 +102,7 @@ const ReturnTable = ({ TableData }) => {
                   <tr className="[&:not(:last-child)]:border-b-2 border-[var(--row-bottom-border-color)]" {...row.getRowProps()} key={"row" + idx}>
                     {
                       row.cells.map((cell, id) => (
-                        <td className="p-4 text-[var(--data-gray-color)] text-base max-sm:p-2 first:hidden [&:nth-child(2)]:hidden [&:nth-child(3)]:hidden hover:underline hover:font-medium" {...cell.getCellProps()} key={"cell" + id}>
+                        <td className="p-4 text-[var(--data-gray-color)] text-base max-sm:p-2 first:hidden [&:nth-child(2)]:hidden hover:underline hover:font-medium" {...cell.getCellProps()} key={"cell" + id}>
                           <Link to={`${row.original.shopifyReturnId}`}> {cell.render("Cell")}</Link>
                           {/* {row.original.variantPrice} */}
                         </td>

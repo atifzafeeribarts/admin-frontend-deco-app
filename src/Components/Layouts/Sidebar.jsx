@@ -1,19 +1,26 @@
 import React, { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import returnBlack from "../../assets/return-black.png";
-import logoutBlack from "../../assets/logout-black.png";
-import accountBlack from "../../assets/account-black.png";
-import { FaAngleDown } from "react-icons/fa6";
+import { FiShoppingBag } from "react-icons/fi";
+import { MdDashboard,MdLogout } from "react-icons/md";
+import { FaCirclePlus, FaAngleDown, FaDev } from "react-icons/fa6";
+import { FiCodesandbox } from "react-icons/fi";
+import { IoIosSettings } from "react-icons/io";
+import { MdOutlineNotificationsActive } from "react-icons/md";
 import { useDispatch } from 'react-redux';
 import { logoutUser, logout } from '../../Redux/Slices/authSlice';
 import ButtonLoadingSpinner from "../ButtonLoadingSpinner";
 import { onErrorToast, onSuccessToast } from "../../Services/helper";
+import DecoTVLOGO from "../../assets/Favicon_DecoTV.png";
 
 const Sidebar = ({ sideMenuOpen }) => {
   const navigate = useNavigate();
-  // LOGOUT ------------------s
+  // LOGOUT ------------------
   const dispatch = useDispatch();
   const [loadedLogoutBTN, setloadedLogoutBTN] = useState(false);
+  const [openpopup, setopenpopup] = useState(false);
+  const logoutpopup = () => {
+    setopenpopup(!openpopup);
+  }
   const handleLogout = async () => {
     setloadedLogoutBTN(true);
     try {
@@ -29,44 +36,66 @@ const Sidebar = ({ sideMenuOpen }) => {
     setloadedLogoutBTN(false);
   };
   // LOGOUT END ------------------
-  const [openDrawer, setOpenDrawer] = useState(false);
   const location = useLocation();
   const { pathname } = location;
-
+  const [openDropdowns, setOpenDropdowns] = useState({});
+  const toggleDropdown = (id) => {
+    setOpenDropdowns((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+  // For the Dropdown Text and URL Must be matched so that it will work ex. Return Request(Text) -> return-request(URL)
   const navigation_object = [
+    {
+      text: "Create Return",
+      link: "/create-return",
+      icon: <FaCirclePlus size={20} />
+    },
     {
       text: "Dashboard",
       link: "/dashboard",
-      icon: "/dashboard.png",
-      active_icon: accountBlack,
+      icon: <MdDashboard size={20} />
     },
     {
-      text: "Return Requests",
+      text: "Return Request",
       type: "dropdown",
-      icon: "/bag.png",
-      active_icon: returnBlack,
+      icon: <FiShoppingBag size={20} />,
       dropdown_items: [
         {
-          text: "Deco TV Frames",
-          link: "/return-request/deco-tv-frames",
+          text: "Developer ENV",
+          link: "/return-request/framemytvapp",
+          icon: <FaDev size={18} />
         },
         {
-          text: "Frame My TV",
-          link: "/return-request/frame-my-tv",
+          text: "Sandbox",
+          link: "/return-request/decotvframes-sandbox",
+          icon: <FiCodesandbox size={18} />
         },
+        {
+          text: "Deco TV Frames",
+          link: "/return-request/decotvframes",
+          img: DecoTVLOGO
+        }
       ],
     },
     {
-      text: "Sign Out",
-      link: "/login",
-      icon: "/signout.png",
-      active_icon: logoutBlack,
+      text: "Settings",
+      type: "dropdown",
+      icon: <IoIosSettings size={20} />,
+      dropdown_items: [
+        {
+          text: "Notifications",
+          link: "/settings/notifications",
+          icon: <MdOutlineNotificationsActive size={18} />
+        }
+      ],
+    },
+    {
+      text: "Log Out",
+      type: "button",
+      clickfunc: logoutpopup,
+      icon: <MdLogout size={20} />
     },
   ];
-  const [openpopup, setopenpopup] = useState(false);
-  const logoutpopup = () => {
-    setopenpopup(!openpopup);
-  }
+
 
   return (
     <div>
@@ -83,29 +112,18 @@ const Sidebar = ({ sideMenuOpen }) => {
                   <div key={id}>
                     <button
                       type="button"
-                      className={`w-full flex items-center p-2 text-[var(--dark-light-brown)] border-b-2 border-transparent hover:text-[var(--text-color)] hover:font-semibold group ib-img-blck-hover ${pathname.includes("return-request")
-                        ? "font-semibold text-[var(--text-color)] ib-img-blck-active border-b-2 border-[var(--text-color)]"
-                        : ""
-                        }`}
-                      aria-controls={`dropdown-${id}`}
-                      onClick={() => setOpenDrawer(!openDrawer)}
+                      className={`w-full flex items-center p-2 text-[var(--dark-light-brown)] border-b-2 border-transparent hover:text-[var(--text-color)] hover:font-semibold group ib-img-blck-hover ${pathname.includes(item.text.replace(" ", "-").toLowerCase())
+                        ? "font-semibold text-[var(--text-color)] ib-img-blck-active border-b-2 border-[var(--text-color)]" : null}`}
+                        onClick={() => toggleDropdown(id)}
                     >
-                      <img src={item.icon} className="ib-img-non-active" />
-                      <img
-                        src={item.active_icon}
-                        className="img-black-active"
-                      />
+                      {item.icon}
                       <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
                         {item.text}
                       </span>
                       <FaAngleDown />
                     </button>
-                    <div
-                      id={`dropdown-${id}`}
-                      className={`${openDrawer ? "" : "hidden"
-                        } py-2 space-y-2 pl-7`}
-                    >
-                      {item.dropdown_items.map((dropdownItem, dropdownId) => (
+                    <div className={`${openDropdowns[id] ? "" : "hidden"} py-2 space-y-2 pl-7`}>
+                      {item.dropdown_items?.map((dropdownItem, dropdownId) => (
                         <div key={dropdownId}>
                           <NavLink
                             to={dropdownItem.link}
@@ -116,7 +134,11 @@ const Sidebar = ({ sideMenuOpen }) => {
                               }`
                             }
                           >
-                            {dropdownItem.text}
+                            {dropdownItem.icon && (
+                              <span className="mr-2">
+                                {dropdownItem.icon}
+                              </span>
+                            )}{dropdownItem.img && <img src={dropdownItem.img} width={16} className="mr-2"/>} {dropdownItem.text}
                           </NavLink>
                         </div>
                       ))}
@@ -124,51 +146,20 @@ const Sidebar = ({ sideMenuOpen }) => {
                   </div>
                 );
               }
-              // This is Button for Sign Out
-              if (item.text === "Sign Out") {
+              // This is Button for Functionality
+              if (item.type === "button") {
                 return (
                   <div key={id}>
-                    <div>
-                      <button
-                        onClick={logoutpopup}
-                        className="w-full flex items-center p-2 text-[var(--dark-light-brown)] border-b-2 border-transparent hover:border-[var(--text-color)] hover:text-[var(--text-color)] hover:font-semibold group ib-img-blck-hover"
-                      >
-                        <img src={item.icon} className="ib-img-non-active" />
-                        <img
-                          src={item.active_icon}
-                          className="img-black-active"
-                        />
-                        <span className="ms-3">{item.text}</span>
-                      </button>
-                    </div>
-                    {/*  POPUP */}
-                    <div id="info-popup" className={`${openpopup ? "block" : "hidden"} -mt-[50px] fixed w-screen top-0 left-0 z-50 h-modal h-screen flex items-center justify-center before:bg-[var(--text-color)] before:opacity-50 before:w-full before:h-full before:absolute`}>
-                      <div className="relative p-4 w-full max-w-lg ">
-                        <div className="relative max-sm:px-4 p-8 bg-[var(--light-cream-background)] rounded-lg shadow ">
-                          <div className="mb-6 text-sm text-[var(--text-color)] ">
-                            <h3 className="mb-3 text-2xl font-bold">Sign Out</h3>
-                            <p>
-                              Are you sure you want to Sign Out?
-                            </p>
-                          </div>
-                          <div className="justify-between items-center pt-0 space-y-4 sm:flex sm:space-y-0">
-                            <div className="items-center space-y-4 sm:space-x-4 sm:flex sm:space-y-0">
-                              <button onClick={logoutpopup} type="button" className="bg-[var(--dark-light-brown)] text-[var(--white-color)] border-[var(--dark-light-brown)] py-2 px-4 w-full rounded-md border-2 text-sm font-medium min-w-[100px]">Cancel</button>
-                              <button onClick={loadedLogoutBTN ? null : handleLogout} id="confirm-button" type="button" className="bg-[var(--dark-light-brown)] text-[var(--white-color)] border-[var(--dark-light-brown)] py-2 px-4 min-w-[100px] w-full rounded-md border-2 text-sm font-medium">
-                                {loadedLogoutBTN ? (
-                                  <ButtonLoadingSpinner sizeClass={"size-5"}/>
-                                ) : "Confirm"}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {/* END POPUP */}
+                    <button
+                      onClick={item.clickfunc}
+                      className="w-full flex items-center p-2 text-[var(--dark-light-brown)] border-b-2 border-transparent hover:border-[var(--text-color)] hover:text-[var(--text-color)] hover:font-semibold group ib-img-blck-hover"
+                    >
+                      {item.icon}
+                      <span className="ms-3">{item.text}</span>
+                    </button>
                   </div>
                 );
               }
-
               return (
                 <div key={id}>
                   <NavLink
@@ -180,8 +171,7 @@ const Sidebar = ({ sideMenuOpen }) => {
                       }`
                     }
                   >
-                    <img src={item.icon} className="ib-img-non-active" />
-                    <img src={item.active_icon} className="img-black-active" />
+                    {item.icon}
                     <span className="ms-3">{item.text}</span>
                   </NavLink>
                 </div>
@@ -190,6 +180,31 @@ const Sidebar = ({ sideMenuOpen }) => {
           </div>
         </nav>
       </aside>
+      {/*  POPUP */}
+      <div id="info-popup" className={`${openpopup ? "block" : "hidden"}  fixed w-screen top-0 left-0 z-50 h-modal h-screen flex items-center justify-center before:bg-[var(--text-color)] before:opacity-50 before:w-full before:h-full before:absolute`}>
+        <div className="relative p-4 w-full max-w-sm">
+          <div className="relative max-sm:px-4 p-8 bg-[var(--light-cream-background)] rounded-lg shadow ">
+            <div className="mb-10 text-sm text-[var(--text-color)] ">
+              <h3 className="mb-3 text-2xl font-bold">Confirm logout</h3>
+              <hr className="mb-3 h-[2px]" />
+              <p>
+                Are you sure you want to log out?
+              </p>
+            </div>
+            <div className="justify-end pt-0 space-y-4 sm:flex sm:space-y-0">
+              <div className="items-center space-y-4 sm:space-x-4 sm:flex sm:space-y-0">
+                <button onClick={logoutpopup} type="button" className="at-light-btn py-2 px-4 w-full text-sm font-medium min-w-[100px]">Cancel</button>
+                <button onClick={loadedLogoutBTN ? null : handleLogout} id="confirm-button" type="button" className="at-dark-btn py-2 px-4 min-w-[100px] w-full text-sm font-medium">
+                  {loadedLogoutBTN ? (
+                    <ButtonLoadingSpinner sizeClass={"size-5"} />
+                  ) : "OK"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* END POPUP */}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MdSearch } from "react-icons/md";
+import { RxCrossCircled } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import { setGlobalFilter } from "../../Redux/Slices/globalFilterSlice";
 
@@ -7,30 +8,32 @@ function SearchBar() {
   const dispatch = useDispatch();
   const query = useSelector((state) => state.query.query);
   const [data, setdata] = useState(query);
-
   useEffect(() => {
     setdata(query);
   }, [query]);
-
   const handleSearch = (e) => {
     dispatch(setGlobalFilter({ query: e.target.value}));
   };
-
+  const handleClear = () => {
+    dispatch(setGlobalFilter({ query: ""}));
+  }
   return (
-    <div className="flex w-full">
+    <div className="flex w-full relative items-center">
+      <div
+        className="absolute top h-full flex justify-center items-center w-12 text-sm"
+      >
+        <MdSearch size={25} color="var(--dark-light-brown)" />
+      </div>
       <input
         type="text"
-        placeholder="Search"
-        className="p-4 w-full rounded-lg rounded-r-none border-2 border-[var(--dark-light-brown)] bg-[var(--light-cream-background)] outline-none focus:outline-none focus:border-[var(--dark-light-brown)] appearance-none text-sm max-sm:p-2"
+        placeholder="Search all Returns"
+        className="pl-10 px-2 py-3 w-full rounded-lg border-2 border-[var(--dark-light-brown)] bg-[var(--light-cream-background)] outline-none focus:outline-none focus:border-[var(--dark-light-brown)] appearance-none text-sm"
         value={query.query}
         onChange={(e) => handleSearch(e)}
       />
-      <p
-        onClick={handleSearch}
-        className="flex justify-center items-center w-12 bg-[var(--dark-light-brown)] rounded-lg rounded-l-none text-sm"
-      >
-        <MdSearch size={25} color="var(--white-color)" />
-      </p>
+
+      {query.query && <div onClick={handleClear} className="absolute top right-2 text-[var(--dark-light-brown)] cursor-pointer hover:scale-110 transition-all"><RxCrossCircled  size={22}/></div>}
+      
     </div>
   );
 }

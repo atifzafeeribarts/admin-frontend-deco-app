@@ -2,9 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
-.at-return-card{
+.at-return-card {
    @apply rounded-md bg-[var(--light-cream-background)] p-5 border-[var(--border-color)] border-2 max-sm:px-4;
 }
-.body{
+
+.at-dark-btn {
+   @apply bg-[var(--dark-light-brown)] border-2 border-transparent text-[var(--white-color)] rounded-md transition-all outline-none;
+}
+
+.at-light-btn {
+   @apply bg-[var(--light-cream-background)] text-[var(--dark-light-brown)] border-2 border-[var(--dark-light-brown)] rounded-md transition-all outline-none;
+}
+
+.at-dark-btn-hover {
+   @apply hover:scale-[1.03] bg-[var(--dark-light-brown)] border-2 border-transparent text-[var(--white-color)] rounded-md hover:bg-[var(--light-cream-background)] hover:border-[var(--dark-light-brown)] hover:text-[var(--dark-light-brown)] transition-all outline-none;
+}
+
+.at-light-btn-hover {
+   @apply hover:scale-[1.03] bg-[var(--light-cream-background)] text-[var(--dark-light-brown)] border-2 border-[var(--dark-light-brown)] rounded-md hover:bg-[var(--dark-light-brown)] hover:border-[var(--dark-light-brown)] hover:text-[var(--white-color)] transition-all outline-none;
+}
+
+.body {
    @apply transition-all scroll-smooth;
+}
+
+:root {
+   --light-cream-background: #FFF9F0;
+   --border-color: #FBF1E2;
+   --row-bottom-border-color: #EBE8DE;
+   --data-gray-color: #6C7275;
+   --text-color: #231F26;
+   --dark-light-brown: #9D8661;
+   --white-color: #ffffff;
+   --black-color: #000000;
+   --light-one-brown-color: #EAD4B1;
+}
+
+body {
+   font-family: "Work Sans", sans-serif;
+}
+
+::-webkit-scrollbar-track {
+   background: #ffffff;
+   border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+   background: #ccc;
+   border-radius: 10px;
+}
+
+::-webkit-scrollbar {
+   height: 6px;
+   width: 10px;
+}
+
+.ibat-scroll-width *::-webkit-scrollbar {
+   width: 7px;
+}
+
+.img-black-active {
+   display: none;
+}
+
+.ib-img-blck-active .img-black-active {
+   display: block;
+}
+
+.ib-img-blck-hover:hover .img-black-active {
+   display: block;
+}
+
+.ib-img-blck-hover:hover .ib-img-non-active {
+   display: none;
+}
+
+.ib-img-blck-active .ib-img-non-active {
+   display: none;
+}
+
+.ib-sidebar-border-btm {
+   border-color: var(--text-color) !important;
+}
+
+.Toastify__toast-body {
+   font-family: "Work Sans", sans-serif;
+   color: var(--text-color);
+}
+
+.Toastify__toast--error .Toastify__toast-body {
+   color: #e74c3c;
+}
+
+.ibat-avatar>span {
+   @apply flex items-center justify-center;
+}
+
+.ibat-avatar>div>span>span {
+   font-size: 13px;
+   line-height: unset;
+   vertical-align: middle;
 }

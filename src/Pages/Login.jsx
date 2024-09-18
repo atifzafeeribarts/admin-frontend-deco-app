@@ -32,16 +32,16 @@ const Login = () => {
   };
   return (
     <section className="flex flex-col p-5 justify-center items-center h-[100dvh] bg-[var(--light-cream-background)]">
-      <div className="flex max-md:flex-col w-full max-w-[900px] shadow-xl bg-[var(--white-color)] rounded-lg max-md:max-w-full">
+      <div className="flex max-md:flex-col w-full max-w-[900px] shadow-xl bg-[var(--white-color)] rounded-lg max-md:max-w-full md:h-[550px]">
         <div className="w-[50%] rounded-l-lg overflow-hidden max-md:rounded-t-lg max-md:rounded-l-none max-md:w-full max-md:hidden">
-          <img className="size-full" src={loginPng} alt="" />
+          <img className="size-full object-cover" src={loginPng} alt="" />
         </div>
         <div className="w-[50%] flex flex-col gap-5 justify-center max-md:w-full p-12 max-lg:p-6 max-md:p-3">
           <div className="text-3xl text-[var(--dark-light-brown)] font-[700] uppercase max-md:text-xl max-md:text-center">
-            Return Ranger
+            <img src="/ReturnRanger.png" className="h-12 max-md:m-auto max-md:h-9" />
           </div>
           <div className="font-semibold text-2xl  max-md:text-xl max-md:text-center w-full">
-            Admin Login
+            Login
           </div>
           <div className="flex flex-col">
             <form className="max-w-sm max-md:max-w-full" onSubmit={handleLogin}>

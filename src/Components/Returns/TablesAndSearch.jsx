@@ -32,19 +32,24 @@ function TablesAndSearch({ TableData, TabName, setTabName, isTableLoaded }) {
   // Info: Updating Count of Returns Closed, Open, Declined and Requested
   const [countData, setcountData] = useState(null);
   useEffect(() => {
+   const countTimeout = setTimeout(() => {
     countReturns().then((data) => {
       setcountData(data)
     })
+   }, 700);
+    return () => {
+      clearTimeout(countTimeout);
+    }
   }, [TabName])
 
   /* ----- END - Taking Data from Child Components ----- */
   return (
     <>
       <div className="flex max-md:flex-col max-sm:gap-4 gap-6 mb-6">
-        <div className="sm:w-[40%]">
+        <div className="md:w-[40%]">
           <SearchBar />
         </div>
-        <div className="sm:w-[60%] flex justify-between items-center gap-2 max-lg:[&>*]:w-[48%]  lg:[&>*]:h-[100%] max-lg:flex-wrap">
+        <div className="md:w-[60%] flex justify-between items-center gap-2 max-lg:[&>*]:w-[48%]  lg:[&>*]:h-[100%] max-lg:flex-wrap">
           {tabs.map((tab) => (
             <TabButton
               key={tab.name}
